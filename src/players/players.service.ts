@@ -11,6 +11,14 @@ export class PlayersService {
 
     async createUpdatePlayer(createPlayerDTO: CreatePlayerDTO): Promise<void> {
 
+        const { email } = createPlayerDTO;
+
+        const foundPlayer = await this.players.find(pl => pl.email === email);
+
+        if (foundPlayer) {
+            return await this.update(foundPlayer, createPlayerDTO);
+        }
+
         await this.create(createPlayerDTO);
     }
 
@@ -33,5 +41,11 @@ export class PlayersService {
         this.players.push(player);
         this.logger.log(`createPlayersDto: ${JSON.stringify(player)}`);
 
+    }
+
+    private update(foundPlayer: Player, createPlayerDTO: CreatePlayerDTO): void {
+        const { name, phoneNumber } = createPlayerDTO;
+
+        foundPlayer.name = name;
     }
 }
